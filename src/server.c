@@ -8,10 +8,10 @@
 
 int start_server(int port) {
     printf("Starting server on port %d...\n", port);
-    int server_fd, new_socket, conection;
+    int server_fd, conection;
     struct sockaddr_in address;
 
-    int server_fd = socket(AF_INET, SOCK_STREAM, 0);
+    server_fd = socket(AF_INET, SOCK_STREAM, 0);
     if (server_fd == -1) {
 
         return -1;
@@ -20,15 +20,15 @@ int start_server(int port) {
     address.sin_addr.s_addr = INADDR_ANY;
     address.sin_port = htons(port);
 
-    conection = bind(server_fd, (struct sockaddr *)&address, sizeof(direction))
+    conection = bind(server_fd, (struct sockaddr *)&address, sizeof(address));
     if (conection == -1) {
-        printf("Port %d was busy", port);
+        fprintf(stderr, "Port %d was busy", port);
         return -1;
     }
     
     listen(server_fd, 2);
 
-    int client_fd = listen(server_fd, NULL, NULL);
+    int client_fd = accept(server_fd, NULL, NULL);
     char buffer[3000];
     read(client_fd, buffer, 3000);
     printf("Message: %s \n", buffer);

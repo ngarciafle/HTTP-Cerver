@@ -1,9 +1,10 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include "main.h"
 
 int main(int argc, char *argv[]) {
     if (argc != 2) {
-        printf(stderr, "Usage: %s <port>\n", argv[0]);
+        fprintf(stderr, "Usage: %s <port>\n", argv[0]);
         return 1;
     }
     int port = atoi(argv[1]);
