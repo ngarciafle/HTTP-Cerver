@@ -2,5 +2,5 @@
 CC = gcc
 CFLAGS = -Iinclude -Wall
 
-mi_programa: src/main.c src/server.c src/parser.c
-	$(CC) $(CFLAGS) src/main.c src/server.c src/parser.c -o bin/servidor
+mi_programa: src/main.c src/server.c
+	$(CC) $(CFLAGS) src/main.c src/server.c -o bin/servidor
