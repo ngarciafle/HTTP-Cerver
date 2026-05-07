@@ -2,5 +2,9 @@
 CC = gcc
 CFLAGS = -Iinclude -Wall
 
+
 mi_programa: src/main.c src/server.c
-	$(CC) $(CFLAGS) src/main.c src/server.c -o bin/servidor
+	$(CC) $(CFLAGS) src/main.c src/server.c -o bin/servidor 
+
+clean:
+	rm ./bin/servidor
