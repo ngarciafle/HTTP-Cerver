@@ -33,5 +33,10 @@ int start_server(int port) {
     read(client_fd, buffer, 3000);
     printf("Message: %s \n", buffer);
 
+    char *response = "HTTP/1.1 200 OK\nContent-Type: text/plain\nContent-Length: 5\n\nHi!!";
+    write(client_fd, response, strlen(response));
+
+    close(client_fd);
+
     return 0;
 }
