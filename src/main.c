@@ -5,7 +5,7 @@
 
 int main() {
     int port = -1;
-    printf("What port will you choose? (enter to close) \n");
+    printf("What port will you choose? (write a letter to exit) \n");
     while(1) {
         scanf("%d", &port);
         if (port < 0 || port > 65536) return 1;
