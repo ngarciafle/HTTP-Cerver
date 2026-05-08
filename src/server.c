@@ -19,7 +19,8 @@ int start_server(int port) {
     address.sin_family = AF_INET;
     address.sin_addr.s_addr = INADDR_ANY;
     address.sin_port = htons(port);
-
+     
+    printf("Server is listening\n");
     conection = bind(server_fd, (struct sockaddr *)&address, sizeof(address));
     if (conection == -1) {
         fprintf(stderr, "Port %d was busy", port);
