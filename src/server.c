@@ -20,18 +20,21 @@ int start_server(int port) {
     address.sin_addr.s_addr = INADDR_ANY;
     address.sin_port = htons(port);
      
-    printf("Server is listening\n");
+    int opt = 1;
+    setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
+
     conection = bind(server_fd, (struct sockaddr *)&address, sizeof(address));
     if (conection == -1) {
         fprintf(stderr, "Port %d was busy", port);
         return -1;
     }
+    printf("Server is listening\n");
     
     listen(server_fd, 2);
 
     int client_fd = accept(server_fd, NULL, NULL);
-    char buffer[3000];
-    read(client_fd, buffer, 3000);
+    char buffer[3000] = {0};
+    read(client_fd, buffer, sizeof(buffer) - 1);
     printf("Message: %s \n", buffer);
 
     char *response = "HTTP/1.1 200 OK\nContent-Type: text/plain\nContent-Length: 5\n\nHi!!";
