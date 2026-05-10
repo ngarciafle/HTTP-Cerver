@@ -46,13 +46,21 @@ static int searchDomain(char *request, char *domain, size_t domainLen) {
 }
 
 static int changeHost(char *request, char *domain) {
+    char *newReq[3000] = {0};
     // Insserting the domain
     char *host = strstr(request, "Host: ");
     if (!host) return 1;
 
     char *end = strchr(host, '\n');
 
-    printf("The host: %s \n", host);
-    printf("The end: %s \n", end);
+    size_t len = host - request;
+    size_t lenEnd = len + strlen(end);
+    
+    if (lenEnd >= sizeof(newReq)) return 1;
+
+    strncpy(newReq, request, len);
+    strncpy(newReq, domain, lenHost);
+    strncpy(newReq, end, lenEnd);
+    printf("The new: %s \n", newReq);
     return 0;
 }
