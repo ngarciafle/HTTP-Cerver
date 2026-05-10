@@ -36,7 +36,13 @@ int start_server(int port) {
         int client_fd = accept(server_fd, NULL, NULL);
         char buffer[3000] = {0};
         read(client_fd, buffer, sizeof(buffer) - 1);
-        printf("All starts: %s \n and ends", buffer);
+        printf("Message: %s \n", buffer);
+
+
+        if (readRequest(buffer, client_fd) == 1) {
+            printf("There was an error while processing the request");
+            close(client_fd);
+        }
     
         char *response = "HTTP/1.1 200 OK\nContent-Type: text/plain\nContent-Length: 5\n\nHi!!";
         write(client_fd, response, strlen(response));

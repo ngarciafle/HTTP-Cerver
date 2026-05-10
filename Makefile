@@ -3,8 +3,8 @@ CC = gcc
 CFLAGS = -Iinclude -Wall
 
 
-mi_programa: src/main.c src/server.c
-	$(CC) $(CFLAGS) src/main.c src/server.c -o bin/servidor 
+mi_programa: src/main.c src/server.c src/proxy.c
+	$(CC) $(CFLAGS) src/main.c src/server.c src/proxy.c -o bin/servidor 
 
 clean:
 	rm ./bin/servidor
