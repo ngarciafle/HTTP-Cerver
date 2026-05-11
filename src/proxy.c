@@ -10,7 +10,7 @@ static int searchDomain(char *request, char *domain, size_t domainLen);
 static int changeHost(char *request, char *domain);
 
 int readRequest(char *request, int client_fd) {
-    char domain[256] = {0};
+    char domain[256] = "Host: ";
     if (searchDomain(request, domain, sizeof(domain)) == 1) return 1;
     
     if (changeHost(request, domain) == 1) return 1;
@@ -41,7 +41,7 @@ static int searchDomain(char *request, char *domain, size_t domainLen) {
     if (len >= domainLen) return 1;
     strncpy(domain, dom, len);
 
-    printf("This is the domain: %s \n\n", domain);
+    // printf("This is the domain: %s \n\n", domain);
     return 0;
 }
 
@@ -59,9 +59,14 @@ static int changeHost(char *request, char *domain) {
     
     if (lenEnd >= sizeof(newReq)) return 1;
 
-    strncpy(newReq, end, lenEnd);
-    strncpy(newReq, domain, lenHost);
-    strncpy(newReq, request, len);
+    char *tmp = newReq;
+    strncpy(tmp, request, len);
+    tmp += len;
+
+    strncpy(tmp, domain, lenHost);
+    tmp += lenHost;
+
+    strncpy(tmp, end, lenEnd);
     printf("The new: %s \n", newReq);
     return 0;
 }
