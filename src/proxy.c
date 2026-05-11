@@ -34,7 +34,7 @@ static int searchDomain(char *request, char *domain, size_t domainLen) {
     dom = temp + 2;
     
     // Set the end of the domain
-    char *end = strchr(dom, '/');
+    char *end = strchr(dom, ' ');
     if (!end) return 1;
 
     size_t len = end - dom;
