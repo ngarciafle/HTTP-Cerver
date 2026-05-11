@@ -1,6 +1,7 @@
 # HTTP-Cerver
 HTTP server in C
 
+```
 mi_servidor_http/
 ├── bin/                # Aquí se guardará el programa ejecutable final
 ├── src/                # Archivos de código fuente (.c)
@@ -15,3 +16,4 @@ mi_servidor_http/
 ├── public/             # Tu carpeta web (HTML, CSS, JS)
 │   └── index.html
 └── Makefile            # El "script" para compilar todo automáticamente
+```
