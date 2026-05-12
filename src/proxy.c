@@ -8,6 +8,7 @@
 
 static int searchDomain(char *request, char *domain, size_t domainLen);
 static int changeHost(char *request, char *domain, char *newReq, size_t lenNewReq);
+static int cleanRoute(char *newReq, size_t lenDom);
 
 int readRequest(char *request, int client_fd) {
     char domain[256] = "Host: ";
@@ -16,6 +17,8 @@ int readRequest(char *request, int client_fd) {
     if (searchDomain(request, domain + 6, sizeof(domain)) == 1) return 1;
     
     if (changeHost(request, domain, newReq, sizeof(newReq)) == 1) return 1;
+
+    if (cleanRoute(newReq, strlen(domain)) == 1) return 1;
 
     printf("This is the host: %s \n ", newReq);
 
@@ -69,5 +72,13 @@ static int changeHost(char *request, char *domain, char *newReq, size_t lenNewRe
 
     strncpy(tmp, end, lenEnd);
     printf("The new: %s \n\n", newReq);
+    return 0;
+}
+
+static int cleanRoute(char *newReq, size_t lenDom) {
+    char *start = newReq + 4;
+    char *end = strstr(start, "/ ");
+    memmove(start, end, strlen(end) + 1);
+    // printf("Cleaned: %s \n", newReq);
     return 0;
 }
