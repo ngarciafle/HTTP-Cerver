@@ -7,15 +7,17 @@
 #include "proxy.h"
 
 static int searchDomain(char *request, char *domain, size_t domainLen);
-static int changeHost(char *request, char *domain);
+static int changeHost(char *request, char *domain, char *newReq, size_t lenNewReq);
 
 int readRequest(char *request, int client_fd) {
     char domain[256] = "Host: ";
+    char newReq[3000] = {0};
+    char originalDomain[256] = {0};
     if (searchDomain(request, domain + 6, sizeof(domain)) == 1) return 1;
     
-    if (changeHost(request, domain) == 1) return 1;
+    if (changeHost(request, domain, newReq, sizeof(newReq)) == 1) return 1;
 
-    printf("This is the host: %s \n ", request);
+    printf("This is the host: %s \n ", newReq);
 
     return 0;
 }
@@ -45,8 +47,7 @@ static int searchDomain(char *request, char *domain, size_t domainLen) {
     return 0;
 }
 
-static int changeHost(char *request, char *domain) {
-    char newReq[3000] = {0};
+static int changeHost(char *request, char *domain, char *newReq, size_t lenNewReq) {
     // Insserting the domain
     char *host = strstr(request, "Host: ");
     if (!host) return 1;
@@ -57,16 +58,14 @@ static int changeHost(char *request, char *domain) {
     size_t lenEnd = len + strlen(end);
     size_t lenHost = strlen(domain);
     
-    if (lenEnd >= sizeof(newReq)) return 1;
+    if (lenEnd >= lenNewReq) return 1;
 
     char *tmp = newReq;
     strncpy(tmp, request, len);
     tmp += len;
-    printf("Added the request: %s \n\n", newReq);
     
     strncpy(tmp, domain, lenHost);
     tmp += lenHost;
-    printf("Added the domain: %s \n\n", newReq);
 
     strncpy(tmp, end, lenEnd);
     printf("The new: %s \n\n", newReq);

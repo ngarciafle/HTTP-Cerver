@@ -42,6 +42,7 @@ int start_server(int port) {
         if (readRequest(buffer, client_fd) == 1) {
             printf("There was an error while processing the request");
             close(client_fd);
+            return 1;
         }
     
         char *response = "HTTP/1.1 200 OK\nContent-Type: text/plain\nContent-Length: 5\n\nHi!!";
