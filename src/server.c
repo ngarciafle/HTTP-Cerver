@@ -35,11 +35,12 @@ int start_server(int port) {
     
         int client_fd = accept(server_fd, NULL, NULL);
         char buffer[3000] = {0};
+        char originalHost[256] = {0};
         read(client_fd, buffer, sizeof(buffer) - 1);
         printf("Message: %s \n", buffer);
 
 
-        if (readRequest(buffer, client_fd) == 1) {
+        if (readRequest(buffer, client_fd, originalHost) == 1) {
             printf("There was an error while processing the request");
             close(client_fd);
             return 1;

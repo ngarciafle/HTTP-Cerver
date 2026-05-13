@@ -7,16 +7,15 @@
 #include "proxy.h"
 
 static int searchDomain(char *request, char *domain, size_t domainLen);
-static int changeHost(char *request, char *domain, char *newReq, size_t lenNewReq);
+static int changeHost(char *request, char *domain, char *newReq, size_t lenNewReq, char *originalHost);
 static int cleanRoute(char *newReq, size_t lenDom);
 
-int readRequest(char *request, int client_fd) {
+int readRequest(char *request, int client_fd, char *originalHost) {
     char domain[256] = "Host: ";
     char newReq[3000] = {0};
-    char originalDomain[256] = {0};
     if (searchDomain(request, domain + 6, sizeof(domain)) == 1) return 1;
     
-    if (changeHost(request, domain, newReq, sizeof(newReq)) == 1) return 1;
+    if (changeHost(request, domain, newReq, sizeof(newReq), originalHost) == 1) return 1;
 
     if (cleanRoute(newReq, strlen(domain)) == 1) return 1;
 
@@ -50,14 +49,21 @@ static int searchDomain(char *request, char *domain, size_t domainLen) {
     return 0;
 }
 
-static int changeHost(char *request, char *domain, char *newReq, size_t lenNewReq) {
+static int changeHost(char *request, char *domain, char *newReq, size_t lenNewReq, char *originalHost) {
     // Insserting the domain
     char *host = strstr(request, "Host: ");
     if (!host) return 1;
 
     char *end = strchr(host, '\n');
 
-    size_t len = host - request;
+    //Save original host
+    size_t len = end - host;
+    originalHost = strncpy(originalHost, host, len);
+    originalHost[len] = '\0';
+    // printf("The original host: %s \n", originalHost);
+
+
+    len = host - request;
     size_t lenEnd = len + strlen(end);
     size_t lenHost = strlen(domain);
     
