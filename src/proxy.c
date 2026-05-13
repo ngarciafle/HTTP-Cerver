@@ -10,8 +10,7 @@ static int searchDomain(char *request, char *domain, size_t domainLen);
 static int changeHost(char *request, char *domain, char *newReq, size_t lenNewReq, char *originalHost);
 static int cleanRoute(char *newReq, size_t lenDom);
 
-int readRequest(char *request, int client_fd, char *originalHost) {
-    char domain[256] = "Host: ";
+int readRequest(char *request, int client_fd, char *originalHost, char *domain) {
     char newReq[3000] = {0};
     if (searchDomain(request, domain + 6, sizeof(domain)) == 1) return 1;
     
@@ -25,7 +24,11 @@ int readRequest(char *request, int client_fd, char *originalHost) {
 }
 
 
-int sendRequest(const char *request, int client_fd) {
+int sendRequest(const char *request, int client_fd, char *response, char *domain) {
+    printf("The domain is: %s \n", domain+5);
+    // int dest_fd = connect(client_fd, domain + 5, 80);
+    // write(dest_fd, request, strlen(request));
+    // read(dest_fd, response, 2999);
     return 0;
 }
 

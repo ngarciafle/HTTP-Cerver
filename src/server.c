@@ -36,17 +36,24 @@ int start_server(int port) {
         int client_fd = accept(server_fd, NULL, NULL);
         char buffer[3000] = {0};
         char originalHost[256] = {0};
+        char response[3000] = {0};
+        char domain[256] = "Host: ";
         read(client_fd, buffer, sizeof(buffer) - 1);
         printf("Message: %s \n", buffer);
 
 
-        if (readRequest(buffer, client_fd, originalHost) == 1) {
+        if (readRequest(buffer, client_fd, originalHost, domain) == 1) {
             printf("There was an error while processing the request");
             close(client_fd);
             return 1;
         }
+        
+        if (sendRequest(buffer, client_fd, response, domain) == 1) {
+            printf("There was an error while making the request");
+            close(client_fd);
+            return 1;
+        }
     
-        char *response = "HTTP/1.1 200 OK\nContent-Type: text/plain\nContent-Length: 5\n\nHi!!";
         write(client_fd, response, strlen(response));
         close(client_fd);
     }
