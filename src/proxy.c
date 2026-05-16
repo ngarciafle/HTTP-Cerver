@@ -10,9 +10,9 @@ static int searchDomain(char *request, char *domain, size_t domainLen);
 static int changeHost(char *request, char *domain, char *newReq, size_t lenNewReq, char *originalHost);
 static int cleanRoute(char *newReq, size_t lenDom);
 
-int readRequest(char *request, int client_fd, char *originalHost, char *domain) {
+int readRequest(char *request, int client_fd, char *originalHost, char *domain, size_t domainLen) {
     char newReq[3000] = {0};
-    if (searchDomain(request, domain + 6, sizeof(domain)) == 1) return 1;
+    if (searchDomain(request, domain + 6, domainLen - 6) == 1) return 1;
     
     if (changeHost(request, domain, newReq, sizeof(newReq), originalHost) == 1) return 1;
 
@@ -25,9 +25,15 @@ int readRequest(char *request, int client_fd, char *originalHost, char *domain) 
 
 
 int sendRequest(const char *request, int dest_fd, int client_fd, char *response, char *domain) {
-    printf("The domain is: %s \n", domain+5);
+    printf("The domain is: %s \n", domain+6);
     write(dest_fd, request, strlen(request));
-    read(dest_fd, response, 2999);
+
+    int bytes = read(dest_fd, response, 2999);
+    if (bytes <= 0) {
+        printf("Destination server closed conection\n");
+        return 1;
+    }
+    
     printf("The response is: %s", response);
     return 0;
 }

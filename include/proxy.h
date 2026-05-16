@@ -1,7 +1,7 @@
 #ifndef PROXY_H
 #define PROXY_H
 
-int readRequest(char *request, int client_fd, char *originalHost, char *domain);
+int readRequest(char *request, int client_fd, char *originalHost, char *domain, size_t domainLen);
 int sendRequest(const char *request, int dest_fd, int client_fd, char *response, char *domain);
 
 #endif

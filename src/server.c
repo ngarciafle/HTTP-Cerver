@@ -32,27 +32,37 @@ int start_server(int port) {
         return -1;
     }
     printf("Server is listening\n");
+    listen(server_fd, 10);
 
     while(1) {
-        listen(server_fd, 10);
-    
         int client_fd = accept(server_fd, NULL, NULL);
+        if (client_fd == -1) {
+            printf("Error accepting connection\n");
+            continue;
+        }
+
         char buffer[3000] = {0};
         char originalHost[256] = {0};
         char response[3000] = {0};
         char domain[256] = "Host: ";
-        read(client_fd, buffer, sizeof(buffer) - 1);
+
+        int bytes = read(client_fd, buffer, sizeof(buffer) - 1);
+        if (bytes <= 0) {
+            printf("Error reading from client: %d\n", bytes);
+            close(client_fd);
+            continue;
+        }
+
         printf("Message: %s \n", buffer);
 
-
-        if (readRequest(buffer, client_fd, originalHost, domain) == 1) {
+        if (readRequest(buffer, client_fd, originalHost, domain, sizeof(domain)) == 1) {
             printf("There was an error while processing the request");
             close(client_fd);
             return 1;
         }
         
-        int dest_fd = connectTo(domain, "80");
-        if (dest_fd == 1) {
+        int dest_fd = connectTo(domain+6, "80");
+        if (dest_fd == -1) {
             printf("There was an error while connecting to the server");
             close(client_fd);
             return 1;
@@ -82,12 +92,12 @@ static int connectTo(const char *domain, const char *port) {
     if (getaddrinfo(domain, port, &hints, &res) != 0) return 1;
 
     int fd = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
-    if (fd == -1) return 1;
+    if (fd == -1) return -1;
 
     if (connect(fd, res->ai_addr, res->ai_addrlen) == -1) {
         close(fd);
         freeaddrinfo(res);
-        return 1;
+        return -1;
     }
 
     freeaddrinfo(res);
