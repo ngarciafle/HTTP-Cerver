@@ -24,11 +24,11 @@ int readRequest(char *request, int client_fd, char *originalHost, char *domain) 
 }
 
 
-int sendRequest(const char *request, int client_fd, char *response, char *domain) {
+int sendRequest(const char *request, int dest_fd, int client_fd, char *response, char *domain) {
     printf("The domain is: %s \n", domain+5);
-    // int dest_fd = connect(client_fd, domain + 5, 80);
-    // write(dest_fd, request, strlen(request));
-    // read(dest_fd, response, 2999);
+    write(dest_fd, request, strlen(request));
+    read(dest_fd, response, 2999);
+    printf("The response is: %s", response);
     return 0;
 }
 

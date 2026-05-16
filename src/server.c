@@ -4,8 +4,11 @@
 #include <unistd.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <netdb.h> 
 #include "server.h"
 #include "proxy.h"
+
+static int connectTo(const char *domain, const char *port);
 
 int start_server(int port) {
     printf("Starting server on port %d...\n", port);
@@ -48,7 +51,14 @@ int start_server(int port) {
             return 1;
         }
         
-        if (sendRequest(buffer, client_fd, response, domain) == 1) {
+        int dest_fd = connectTo(domain, "80");
+        if (dest_fd == 1) {
+            printf("There was an error while connecting to the server");
+            close(client_fd);
+            return 1;
+        }
+
+        if (sendRequest(buffer, dest_fd, client_fd, response, domain) == 1) {
             printf("There was an error while making the request");
             close(client_fd);
             return 1;
@@ -62,4 +72,24 @@ int start_server(int port) {
     close(server_fd);
 
     return 0;
+}
+
+static int connectTo(const char *domain, const char *port) {
+    struct addrinfo hints = {0}, *res;
+    hints.ai_family = AF_UNSPEC;
+    hints.ai_socktype = SOCK_STREAM;
+
+    if (getaddrinfo(domain, port, &hints, &res) != 0) return 1;
+
+    int fd = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
+    if (fd == -1) return 1;
+
+    if (connect(fd, res->ai_addr, res->ai_addrlen) == -1) {
+        close(fd);
+        freeaddrinfo(res);
+        return 1;
+    }
+
+    freeaddrinfo(res);
+    return fd;
 }
