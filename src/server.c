@@ -67,6 +67,7 @@ int start_server(int port) {
         if (dest_fd == -1) {
             printf("There was an error while connecting to the server");
             close(client_fd);
+            close(dest_fd);
             continue;
         }
 
@@ -78,6 +79,7 @@ int start_server(int port) {
     
         write(client_fd, response, strlen(response));
         close(client_fd);
+        close(dest_fd);
     }
     
 
