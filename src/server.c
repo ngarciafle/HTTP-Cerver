@@ -67,13 +67,13 @@ int start_server(int port) {
         if (dest_fd == -1) {
             printf("There was an error while connecting to the server");
             close(client_fd);
-            return 1;
+            continue;
         }
 
-        if (sendRequest(buffer, dest_fd, client_fd, response, domain) == 1) {
+        if (sendRequest(newReq, dest_fd, client_fd, response, domain) == 1) {
             printf("There was an error while making the request");
             close(client_fd);
-            return 1;
+            continue;
         }
     
         write(client_fd, response, strlen(response));
@@ -91,7 +91,7 @@ static int connectTo(const char *domain, const char *port) {
     hints.ai_family = AF_UNSPEC;
     hints.ai_socktype = SOCK_STREAM;
 
-    if (getaddrinfo(domain, port, &hints, &res) != 0) return 1;
+    if (getaddrinfo(domain, port, &hints, &res) != 0) return -1;
 
     int fd = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
     if (fd == -1) return -1;
