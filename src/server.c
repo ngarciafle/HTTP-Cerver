@@ -45,6 +45,8 @@ int start_server(int port) {
         char originalHost[256] = {0};
         char response[3000] = {0};
         char domain[256] = "Host: ";
+        char newReq[3000] = {0};
+
 
         int bytes = read(client_fd, buffer, sizeof(buffer) - 1);
         if (bytes <= 0) {
@@ -55,7 +57,7 @@ int start_server(int port) {
 
         printf("Message: %s \n", buffer);
 
-        if (readRequest(buffer, client_fd, originalHost, domain, sizeof(domain)) == 1) {
+        if (readRequest(buffer, client_fd, originalHost, domain, sizeof(domain), newReq, sizeof(newReq)) == 1) {
             printf("There was an error while processing the request");
             close(client_fd);
             return 1;
