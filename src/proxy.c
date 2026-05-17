@@ -38,6 +38,11 @@ int sendRequest(const char *request, int dest_fd, int client_fd, char *response,
     return 0;
 }
 
+int handleConnect(int client_fd, char *request) {
+    // Working on it...
+    return 0;
+}
+
 static int searchDomain(char *request, char *domain, size_t domainLen) {
     const char *dom = request + 4;
     

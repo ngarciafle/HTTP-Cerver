@@ -40,17 +40,31 @@ int start_server(int port) {
             printf("Error accepting connection\n");
             continue;
         }
-
+        
         char buffer[3000] = {0};
         char originalHost[256] = {0};
         char response[3000] = {0};
         char domain[256] = "Host: ";
         char newReq[3000] = {0};
-
-
+        
+        
         int bytes = read(client_fd, buffer, sizeof(buffer) - 1);
         if (bytes <= 0) {
             printf("Error reading from client: %d\n", bytes);
+            close(client_fd);
+            continue;
+        }
+        
+        // Detect TLS -> pass (working on it...)
+        if ((unsigned char)buffer[0] == 0x16) {
+            printf("HTTPS not supported\n");
+            close(client_fd);
+            continue;
+        }
+
+        // Detect CONNECT :)
+        if (strncmp(buffer, "CONNECT", 7) == 0) {
+            handleConnect(client_fd, buffer);
             close(client_fd);
             continue;
         }
